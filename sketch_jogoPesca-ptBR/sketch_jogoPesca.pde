@@ -1,5 +1,7 @@
-//Arduino deve estar rodando o Standard Firmata para funcionamento
-/*--- ARDUINO ---*/
+//DSG1412 - Interfaces Físicas e Lógicas
+//Felipe Rabaça e João Pedro Mafra
+
+/*--- ARDUINO ---*/ //Arduino deve estar rodando o Standard Firmata para funcionar
 import processing.serial.*;
 import cc.arduino.*;
 Arduino arduino;
@@ -211,7 +213,7 @@ void draw() {
     }
 
     //BOTA - LIXO
-    if (timer%9 == 0 && timer!=tempoLimite && timer!=0) { //a cada 9 segundos uma bota aparece
+    if (timer%12 == 0 && timer!=tempoLimite && timer!=0) { //a cada 9 segundos uma bota aparece
       posXLixo = width; //ela surge na direita da tela
     }
     image(imgBota, posXLixo, (height/2 - 20)); //imagem do lixo na posição atual
@@ -230,7 +232,7 @@ void draw() {
     //0 > dentro dagua, 1 > fora dagua;
     //se a leitura salva (anterior) for dentro dagua (0) e a atual for fora dagua (1) é pq tirou a vara de pesca de dentro dagua (pescou)
     if (leituraSalva == 0 && leituraAtual == 1) {
-      if (posXAnzol-15 <= posXPeixe && posXAnzol + 65 >= posXPeixe) { //se o peixe estiver dentro de uma faixa definida pela posicao do anzol
+      if (posXAnzol-40 <= posXPeixe && posXAnzol + 65 >= posXPeixe) { //se o peixe estiver dentro de uma faixa definida pela posicao do anzol
         //println("pescou");
         pontos = pontos + ganhos; //ganha os pontos. pontos = pontos atuais + valor atual de ganhos (streak de peixes pescados)
         textoGanhos = ganhos; //define o texto que vai aparecer subindo a tela antes de somar +1
