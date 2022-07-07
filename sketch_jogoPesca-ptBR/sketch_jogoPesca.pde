@@ -1,6 +1,4 @@
-/*  Arduino must be running Standard Firmata for this sketch to work
- Open Arduino program > File > Examples > Firmata > StandardFirmata and upload it to your board. */
-
+//Arduino deve estar rodando o Standard Firmata para funcionamento
 /*--- ARDUINO ---*/
 import processing.serial.*;
 import cc.arduino.*;
@@ -105,13 +103,13 @@ void draw() {
     textSize(30);
     //animação do carregando... nos primeiros 4 segundos do programa
     if (timer == 0) {
-      text("Loading", width/2, height/2);
+      text("Carregando", width/2, height/2);
     } else if (timer == 1) {
-      text("Loading.", width/2, height/2);
+      text("Carregando.", width/2, height/2);
     } else if (timer == 2) {
-      text("Loading..", width/2, height/2);
+      text("Carregando..", width/2, height/2);
     } else if (timer == 3) {
-      text("Loading...", width/2, height/2);
+      text("Carregando...", width/2, height/2);
     } else if (timer == 4) { //quando der o segundo 4
       timer = 5; //define timer como 5, pra ficar pronto para a tela seguinte
       tela = 1; //passa para a tela 1, tela inicial para começar o jogo
@@ -135,7 +133,7 @@ void draw() {
 
     if (pontos!=0) { //se os pontos forem diferente de zero é pq já jogaram e fizeram ponto, então é game over
       textSize(50);
-      text(pontos + " points", width/2, height*0.25); //aí escreve a pontuação na tela
+      text(pontos + " pontos", width/2, height*0.25); //aí escreve a pontuação na tela
     }
 
     imageMode(CENTER);
@@ -144,11 +142,11 @@ void draw() {
 
     //texto dizendo quantos segundos pra deixar a vara na água pro jogo começar
     textSize(30);
-    text("Keep the fishing rod in the water for", width/2, height*0.6);
+    text("Mantenha a vara na água por", width/2, height*0.6);
     textSize(42);
     text(timer, width/2, height*0.65);
     textSize(30);
-    text("seconds to play the game!", width/2, height*0.7);
+    text("segundos para começar", width/2, height*0.7);
 
     if (leituraAtual == 0 && timer <= 0) { //se o sensor estiver na água e o timer for zero
       pontos = 0; //reseta os pontos
@@ -179,7 +177,7 @@ void draw() {
     //text(leituraAtual, 200, 200); //leitura atual do sensor
     textAlign(LEFT);
     fill(255);
-    text(pontos + " points", width*0.05, height*0.10); //pontuacao na esquerda da tela
+    text(pontos + " pontos", width*0.05, height*0.10); //pontuacao na esquerda da tela
     textAlign(RIGHT);
     text(timer, width*0.95, height*0.10); //timer na direita da tela
     textAlign(LEFT);
