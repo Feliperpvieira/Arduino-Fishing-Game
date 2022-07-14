@@ -7,8 +7,9 @@ The idea of this project was to build a fishing minigame, similar to the ones fo
 
 https://user-images.githubusercontent.com/47862856/177642214-8de76fbd-b042-4460-bff1-4337da4aa81d.mp4
 
-## How was it made?
+## How it was made
 Language: Processing\
+[Download the latest version of Arduino](https://www.arduino.cc/en/software) to install Standard Firmata on your board\
 [Download the latest version of Processing](https://processing.org/download) to run the game
 
 #### Eletronic components
@@ -29,3 +30,4 @@ Language: Processing\
   </tr>
 </table>
 
+#### Circuit 
