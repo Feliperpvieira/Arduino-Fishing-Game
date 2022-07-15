@@ -89,6 +89,6 @@ Press the mouse button to keep the fishing hook in the water, release the button
 </table>
 
 #### Credits
-Authors: [Felipe Rabaça](https://feliperpv.com) and João Pedro Mafra
-DSG1412 - Physical Computing Interfaces
-Professor João Bonelli - [Physical Computing Interfaces Laboratory](http://www.life.dad.puc-rio.br/sobre-english.html)
+Authors: [Felipe Rabaça](https://feliperpv.com) and João Pedro Mafra\
+DSG1412 - Physical Computing Interfaces\
+Professor: João Bonelli - [Physical Computing Interfaces Laboratory](http://www.life.dad.puc-rio.br/sobre-english.html)
