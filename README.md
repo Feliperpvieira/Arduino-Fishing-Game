@@ -77,7 +77,7 @@ If you don't have an Arduino or the water level sensor available but still want 
 
 All you need is to download and open the file on Processing to play the mouse version.\
 In this version, keeping the fishing rod in the water was replaced by pressing the mouse button.\
-Press the mouse button to keep the fishing hook in the water, release the button to fish. Good luck!
+Press and release the mouse button to fish. Good luck!
 
 #### Screenshots 
 <table>
