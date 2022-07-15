@@ -9,8 +9,8 @@ https://user-images.githubusercontent.com/47862856/177642214-8de76fbd-b042-4460-
 
 ## How it was made
 Language: Processing\
-[Download the latest version of Arduino](https://www.arduino.cc/en/software) to install Standard Firmata on your board\
-[Download the latest version of Processing](https://processing.org/download) to run the game
+[Download Arduino](https://www.arduino.cc/en/software) to install Standard Firmata on your board\
+[Download Processing](https://processing.org/download) to run the game
 
 #### Eletronic components
 <table>
@@ -30,4 +30,18 @@ Language: Processing\
   </tr>
 </table>
 
-#### Circuit 
+#### Circuit and construction
+
+The circuit is simple, you need to connect the sensor to the Arduino using a resistor between the input and ground cables.
+
+![DSCF2565-2](https://user-images.githubusercontent.com/47862856/179271221-70145025-c37d-4a08-bcb9-f472f0115fb2.jpg)
+
+- 🔵 Blue cable: 5V (Arduino) -> Water level sensor
+- 🟣 Purple cable: Ground/GND (Arduino) -> Resistor
+- 🟢 Green cable: Digital input (Arduino) -> Resistor -> Water Level Sensor
+
+You can see in more details the circuit and the fishing rod in the following video:
+
+https://user-images.githubusercontent.com/47862856/179274409-4f7bc57d-b267-4d9c-96fa-20be3cf970c4.mp4
+
+The fishing rod was built using two pieces of 3mm MDF
