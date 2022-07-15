@@ -6,9 +6,9 @@ Fishing game using Arduino, Processing and a Water Level Sensor.\
 The idea of this project was to build a fishing minigame, similar to the ones found in popular games, such as Club Penguin and Mario Party, but this time using real water and a physical fishing rod to control it, bringing the virtual and physical spaces closer together.
 
 **Topics:**\
-[How it was made](https://github.com/Feliperpvieira/Arduino-Fishing-Game/edit/main/README.md#how-it-was-made)\
-[How to install and run the game](https://github.com/Feliperpvieira/Arduino-Fishing-Game/edit/main/README.md#how-to-install-and-run-the-game)\
-[No-Arduino / Mouse version](https://github.com/Feliperpvieira/Arduino-Fishing-Game/edit/main/README.md#no-arduino-no-problem)
+[How it was made](https://github.com/Feliperpvieira/Arduino-Fishing-Game#how-it-was-made)\
+[How to install and run the game](https://github.com/Feliperpvieira/Arduino-Fishing-Game#how-to-install-and-run-the-game)\
+[No-Arduino / Mouse version](https://github.com/Feliperpvieira/Arduino-Fishing-Game#no-arduino-no-problem)
 
 https://user-images.githubusercontent.com/47862856/177642214-8de76fbd-b042-4460-bff1-4337da4aa81d.mp4
 
