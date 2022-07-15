@@ -1,148 +1,146 @@
-//DSG1412 - Interfaces Físicas e Lógicas
-//Authors: Felipe Rabaça e João Pedro Mafra
+/*  Arduino must be running Standard Firmata for this sketch to work
+ Open Arduino program > File > Examples > Firmata > StandardFirmata and upload it to your board. */
 
-/*--- ARDUINO ---*/ //Arduino deve estar rodando o Standard Firmata para funcionar
+/*--- ARDUINO SETUP ---*/
 import processing.serial.*;
 import cc.arduino.*;
 Arduino arduino;
-/*--- VARIAVEIS ARDUINO ---*/
-int sensorNivelAgua = 3; //Conexão onde o sensor de nível de água está ligado, colocar o número da porta digital sendo usada
-//O sensor de água é digital, então ele lê 0 em um estado e 1 no outro
-//0 e 1 pra dentro e fora dagua dependem da posicao que voce prender o sensor, testar e alterar aqui se necessário
-int leituraSalva = 0; //leitura salva é a leitura na ultima modificacao de estado do sensor. 0 aqui é o sensor dentro da agua
-int leituraAtual; //leitura atual é sempre o jeito que o sensor estiver lendo no momento
+/*--- ARDUINO VARIABLES ---*/
+int waterLevelSensor = 3; //Port where the water sensor is connected, WRITE HERE the number of the digital input port you are using
+//The water level sensor is digital. It reads either 0 or 1 depending on its status
+//0 -> inside water; 1 -> outside water
+//These values vary by the position you installed the sensor, TRY IT FIRST and see if your case matches this one.
+int savedSensorRead = 0; //leitura salva é a leitura na ultima modificacao de estado do sensor. 0 aqui é o sensor dentro da agua
+int currentSensorRead; //leitura atual é sempre o jeito que o sensor estiver lendo no momento
 
-/*--- VARIAVEIS PROCESSING ---*/
-int tela = 0; //tela 0 é instrução, 1 é de inicio, 2 de jogo
-int tempoLimite = 60; //tempo limite do jogo
-int timer; //tempo atual de jogo
+/*--- PROCESSING VARIABLES ---*/
+int screen = 0; //screen 0: instructions, 1: start, 2: game
+int maxTime = 60; //each game duration
+int timer; //current time of the game
 
-//arquivos e imagens
-PImage imgPeixe;
-PImage imgAnzol;
-PImage imgBota;
-PImage imgRocha;
-PImage imgFundo;
+//images and files
+PImage imgFish;
+PImage imgHook;
+PImage imgTrash;
+PImage imgRock;
+PImage imgBackground;
 PImage imgLogo;
-PFont fonteTitan;
+PFont fontTitan;
 
-//Posição dos itens
-int posXPeixe; //posicao X do peixe, animacao dele
-int posXAnzol; //posicao X do anzol, definida pelo meio da tela
-float posYAnzol; //posicao y do anzol, definida pelo meio vertical da tela - um pouquinho
-int velocidadePeixe = 4; //velocidade inicial do peixe, depois disso cada vez varia a velocidade
-int posXLixo; //posição X do lixo
+//Position of items
+int posXFish; //fish X position + animation
+int posXHook; //hook X position, is defined by the horizontal screen size
+float posYHook; //hook Y position, defined by the vertical screen size
+int fishSpeed = 4; //speed of the first fish, every fish has a random speed defined
+int posXTrash; //trash X position
 
-//Pontuação e ganhos
-int pontos; //pontuacao total
-int ganhos = 1; //quantidade de pontos ganhos ao pontuar
-boolean bateuNoLixo = false; //define se o impacto com o lixo já aconteceu ou não pra evitar de colidir várias vezes
+//Points and bonus
+int points; //total points
+int bonus = 1; //amount of points you win by each fish you catch
+boolean isTrashHit = false; //the trash collides once with the hook and then changes to true to avoid it from colliding many times
 
-//animacao da pontuação, aparece ao pescar um peixe e sobe a tela
-boolean animacaoGanhos = false; //se a animacao da pontuacao está acontecendo
-int posTextoGanhosY; //posicao do texto da animacao de pontuacao
-int textoGanhos; //texto com o numero de quantos pontos foram ganhos ali
-//aqui embaixo é a mesma coisa mas pra quando perde pontos
-int posTextoPerdasY;
-float posTextoPerdasX; //define se o texto vai aparecer no anzol pro lixo ou na rocha pro peixe
-boolean animacaoPerdas = false;
+//Points text animation
+boolean bonusAnimation = false; //is the animation active right now?
+int posYBonusText; //position of the text, it goes up the screen
+int bonusText; //text of the amount of points you won
+//same thing but now for lost points:
+int posYLossesText;
+float posXLossesText; //position X defines if the text shows up at the hook or at the rock
+boolean lossesAnimation = false;
 
 
 void setup() {
-  /*--- SETUP DO ARDUINO ---*/
-  printArray(Arduino.list()); //Imprime lista de portas seriais disponíveis, verificar em qual porta a sua arduino está conectada
-  println("Coloque a porta serial que o Arduino está conectado em Arduino.list()[NUMERO] no setup()");
-  arduino = new Arduino(this, Arduino.list()[1], 57600); // <<<<< colocar aqui a porta serial que o Arduino está conectado
-  arduino.pinMode(sensorNivelAgua, arduino.INPUT); //Input mode do arduino na conexão do sensor
+  /*--- ARDUINO SETUP ---*/
+  printArray(Arduino.list()); //Print the serial ports available, see which port your arduino is connected
+  println("Write the serial port your Arduino is connected in Arduino.list()[NUMBER] on setup()");
+  arduino = new Arduino(this, Arduino.list()[1], 57600); // <<<<< write here the serial port your arduino is connected
+  arduino.pinMode(waterLevelSensor, arduino.INPUT);
 
   /*--- SETUP PROCESSING ---*/
   //size(1080, 720);
   fullScreen();
 
-  //define as posições do peixe no fim da tela e anzol no meio
-  //no setup para pegar o tamanho de fullscreen da tela
-  //posXPeixe = width;
-  posXAnzol = int(width*0.55);
-  posXLixo = -50; //pro lixo começar fora da tela
+  //fish and hook positions in the screen
+  //this is done here to happen after the setup. this way it already gets the current screen size
+  posXHook = int(width*0.55);
+  posXTrash = -50; //the trash begins the game outside the screen
 
-  //imagens e redimensionamento do tamanho
-  imgAnzol = loadImage("anzol.png");
-  imgAnzol.resize(61, 212);
-  imgPeixe = loadImage("peixe.png");
-  imgPeixe.resize(200, 108);
-  imgBota = loadImage("bota.png");
-  imgBota.resize(90, 116);
-  imgRocha = loadImage("pedra.png");
-  imgRocha.resize(width, height);
+  //image files and resizing
+  imgHook = loadImage("anzol.png");
+  imgHook.resize(61, 212);
+  imgFish = loadImage("peixe.png");
+  imgFish.resize(200, 108);
+  imgTrash = loadImage("bota.png");
+  imgTrash.resize(90, 116);
+  imgRock = loadImage("pedra.png");
+  imgRock.resize(width, height);
   imgLogo = loadImage("logo.png");
   imgLogo.resize(480, 200);
-  imgFundo = loadImage("fundo.png");
-  imgFundo.resize(width, height);
+  imgBackground = loadImage("fundo.png");
+  imgBackground.resize(width, height);
 
-  //carregar fonte, arquivo na pasta data
-  fonteTitan = createFont("titanone.ttf", 32);
+  //text font
+  fontTitan = createFont("titanone.ttf", 32);
 }
 
 void draw() {
-  leituraAtual = arduino.digitalRead(sensorNivelAgua); //leituraAtual é igual a leitura digital do sensor de água, 0 ou 1
-  //print("leituraAtual sensor: "); //escreve no console "leituraAtual do sensor:"
-  //println(leituraAtual); //escreve no console a leituraAtual
+  currentSensorRead = arduino.digitalRead(waterLevelSensor); //currentSensorRead = current water level sesnor data, 0 or 1
+  //print("currentSensorRead: ");
+  //println(currentSensorRead);
 
-  image(imgFundo, 0, 0); //imagem de fundo do oceano
-  textFont(fonteTitan); //define a fonte em todo o draw como Titan One
+  image(imgBackground, 0, 0); //ocean background image
+  textFont(fontTitan); //all the texts use Titan One font
 
   /*--- LOADING ---*/
-  //quando o programa começa a rodar, o sensor ainda não foi lido direito, então
-  //independente da posição do sensor, ele lê como 0 no primeiro segundo, pra só depois ir para a leitura real
-  //esse loading aqui faz com que dê tempo do programa só começar a rodar já com a leitura certa
-  if (tela == 0) {
-    if (frameCount % 60 == 0) { //se o frameCount for divisivel por 60 então 1 segundo passou, a conta soma 1
+  //It takes a few seconds for the arduino data to be properly read
+  //this fake loading takes 4 seconds, enough time for the arduino to be properly running and getting the actual data from the sensor
+  if (screen == 0) {
+    if (frameCount % 60 == 0) { //if it is 0 then 1 second has passed
       timer++;
       //println(timer);
     }
 
     textAlign(CENTER);
     textSize(30);
-    //animação do carregando... nos primeiros 4 segundos do programa
+    //loading... animation
     if (timer == 0) {
-      text("Carregando", width/2, height/2);
+      text("Loading", width/2, height/2);
     } else if (timer == 1) {
-      text("Carregando.", width/2, height/2);
+      text("Loading.", width/2, height/2);
     } else if (timer == 2) {
-      text("Carregando..", width/2, height/2);
+      text("Loading..", width/2, height/2);
     } else if (timer == 3) {
-      text("Carregando...", width/2, height/2);
-    } else if (timer == 4) { //quando der o segundo 4
-      timer = 5; //define timer como 5, pra ficar pronto para a tela seguinte
-      tela = 1; //passa para a tela 1, tela inicial para começar o jogo
+      text("Loading...", width/2, height/2);
+    } else if (timer == 4) { //when it hits 4 seconds
+      timer = 5;
+      screen = 1; //changes screen to screen 1
     }
   }
 
-  /*--- TELA INICIAL e GAME OVER ---*/
-  if (tela == 1) {
-    //aqui precisa repetir o código do timer a cada tela para fazer o timer só rodar se o sensor estiver na água
-    if (leituraAtual == 0) { //se o sensor estiver dentro dágua
-      if (frameCount % 60 == 0) { //se o frameCount for divisivel por 60 então 1 segundo passou
-        timer--; //reduz 1 segundo da conta (definido na tela anterior)
+  /*--- START and GAME OVER screens ---*/
+  if (screen == 1) {
+    if (currentSensorRead == 0) { //if the sensor is in the water
+      if (frameCount % 60 == 0) {
+        timer--;
         //println(timer);
       }
-    } else if (leituraAtual == 1) { //se o sensor for removido da água
-      timer = 5; //reseta pra 5
+    } else if (currentSensorRead == 1) { //if the sensor is outside the water
+      timer = 5; //redefines to 5
     }
 
-    fill(255); //cor do texto
+    fill(255); //text color is white
     textAlign(CENTER);
 
-    if (pontos!=0) { //se os pontos forem diferente de zero é pq já jogaram e fizeram ponto, então é game over
+    if (points!=0) { //if the points are different from 0 it means the game has already been played, so it is game over
       textSize(50);
-      text(pontos + " points", width/2, height*0.25); //aí escreve a pontuação na tela
+      text(points + " points", width/2, height*0.25); //shows last game points in the screen
     }
 
     imageMode(CENTER);
-    image(imgLogo, width/2, height*0.4); //logo no centro da tela
+    image(imgLogo, width/2, height*0.4); //fishing logo
     imageMode(CORNER);
 
-    //texto dizendo quantos segundos pra deixar a vara na água pro jogo começar
+    //text saying how many seconds to keep the sensor in the water to start the game
     textSize(30);
     text("Keep the fishing rod in the water for", width/2, height*0.6);
     textSize(42);
@@ -150,147 +148,147 @@ void draw() {
     textSize(30);
     text("seconds to play the game!", width/2, height*0.7);
 
-    if (leituraAtual == 0 && timer <= 0) { //se o sensor estiver na água e o timer for zero
-      pontos = 0; //reseta os pontos
-      ganhos = 1; //reseta os ganhos
-      timer = tempoLimite; //timer volta para o tempo limite de fase, definido nas variaveis
-      posXPeixe = width; //peixe volta pro fim da tela na direita
-      animacaoPerdas = false; //desliga todas as animações
-      animacaoGanhos = false;
-      tela = 2; //passa para a tela de jogo
+    if (currentSensorRead == 0 && timer <= 0) { //if the sensor is in the water and timer is 0
+      points = 0; //reset points
+      bonus = 1; //reset bonus
+      timer = maxTime; //timer is set as maxTime
+      posXFish = width; //fish is set at the right border of the screen
+      lossesAnimation = false;
+      bonusAnimation = false;
+      screen = 2;
     }
   }
 
-  /*--- JOGO ---*/
-  if (tela == 2) {
+  /*--- GAME ---*/
+  if (screen == 2) {
 
-    if (frameCount % 60 == 0) { //se o frameCount for divisivel por 60 então 1 segundo passou, a conta soma 1
+    if (frameCount % 60 == 0) { //game timer
       timer--;
       //println(timer);
     }
-    if (timer <= 0) { //se o timer chegar a 0
-      timer = 5; //define o timer como 5 pra tela de game over
-      tela = 1; //vai pra tela inicial/game over
+    if (timer <= 0) { //if timer is 0 it is game over
+      timer = 5; 
+      screen = 1; 
     }
 
     //INTERFACE
     //background(200);
     textSize(50);
-    //text(leituraAtual, 200, 200); //leitura atual do sensor
+    //text(currentSensorRead, 200, 200);
     textAlign(LEFT);
     fill(255);
-    text(pontos + " points", width*0.05, height*0.10); //pontuacao na esquerda da tela
+    text(points + " points", width*0.05, height*0.10); //points
     textAlign(RIGHT);
-    text(timer, width*0.95, height*0.10); //timer na direita da tela
+    text(timer, width*0.95, height*0.10); //timer
     textAlign(LEFT);
 
-    //ANZOL
-    if (leituraAtual == 0) { //0 é dentro dagua
-      posYAnzol = height/2-height*0.1; //entao o anzol está na metade vertical da tela
-    } else if (leituraAtual == 1) { //1 é fora dagua
-      posYAnzol = height*0.10; //entao o anzol aparece no topo da tela
+    //HOOK
+    if (currentSensorRead == 0) { //0 is inside the water
+      posYHook = height/2-height*0.1; //hook shows at half of vertical screen size
+    } else if (currentSensorRead == 1) { //1 is out of water
+      posYHook = height*0.10; //hook shows at top of the screen
     }
-    //desenha o anzol na posição y definida acima, posX é o meio horizontal da tela
-    strokeWeight(6); //grossura da linha do anzol
-    stroke(102, 102, 102); //cor da linha do anzol
-    line(posXAnzol, 0, posXAnzol, posYAnzol); //desenha a linha do anzol
-    image(imgAnzol, posXAnzol-15, posYAnzol); //coloca a imagem do anzol em si
+    
+    strokeWeight(6);
+    stroke(102, 102, 102);
+    line(posXHook, 0, posXHook, posYHook); 
+    image(imgHook, posXHook-15, posYHook);
 
-    //PEIXE
-    posXPeixe = posXPeixe - velocidadePeixe; //movimento do peixe
-    image(imgPeixe, posXPeixe, (height/2 - 92/2)); //imagem do peixe na posição definida acima
+    //FISH
+    posXFish = posXFish - fishSpeed;
+    image(imgFish, posXFish, (height/2 - 92/2));
 
-    if (posXPeixe <= width*0.2) { //se o peixe estiver sob a rocha
-      posXPeixe = width; //ele volta pro lado direito
-      pontos--; //perde 1 ponto
-      ganhos = 1; //os pontos ganhos a cada pesca resetam pra 1
-      velocidadePeixe = int(random(2, 10)); //sorteia velocidade nova pro proximo peixe
+    if (posXFish <= width*0.2) { //if the fish is under the rock
+      posXFish = width; //goes back to the right side of the screen
+      points--; //loses 1 points
+      bonus = 1; //bonus are reseted to 1
+      fishSpeed = int(random(2, 10)); //new random velocity for the next fish
 
-      //Animação de perda de ponto
-      posTextoPerdasX = width*0.22; //X como um pouco a direita do ponto que o peixe some
-      posTextoPerdasY = height/2; //define a posição Y do texto pro meio da tela
-      animacaoPerdas = true; //define a animação como true
+      //point losses animation
+      posXLossesText = width*0.22;
+      posYLossesText = height/2;
+      lossesAnimation = true;
     }
 
-    //BOTA - LIXO
-    if (timer%12 == 0 && timer!=tempoLimite && timer!=0) { //a cada 9 segundos uma bota aparece
-      posXLixo = width; //ela surge na direita da tela
+    //BOOT - TRASH
+    if (timer%12 == 0 && timer!=maxTime && timer!=0) {
+      posXTrash = width; //boot starts at the right of the screen every 12 seconds
     }
-    image(imgBota, posXLixo, (height/2 - 20)); //imagem do lixo na posição atual
-    posXLixo = posXLixo - 3; //move 3 pixeis pra esquerda por frame
+    image(imgTrash, posXTrash, (height/2 - 20));
+    posXTrash = posXTrash - 3; //trash goes 3 pixels left every frame
 
     //ROCHA
-    image(imgRocha, 0, 0); //rocha no 0, 0 ocupando a tela toda
+    image(imgRock, 0, 0); //rock image
 
-    //Linhas para marcar a area que a pescaria ocorre
+    //These lines show the area where the fishing is successful
     /*stroke(255,0,0);
-     line(posXAnzol-15, 0, posXAnzol-15, height/2);
-     line(posXAnzol-40, 0, posXAnzol-40, height/2);
-     line(posXAnzol + 65, 0, posXAnzol + 65, height/2);*/
+     line(posXHook-15, 0, posXHook-15, height/2);
+     line(posXHook-40, 0, posXHook-40, height/2);
+     line(posXHook + 65, 0, posXHook + 65, height/2);*/
 
-    /*-- PESCARIA --*/
-    //0 > dentro dagua, 1 > fora dagua;
-    //se a leitura salva (anterior) for dentro dagua (0) e a atual for fora dagua (1) é pq tirou a vara de pesca de dentro dagua (pescou)
-    if (leituraSalva == 0 && leituraAtual == 1) {
-      if (posXAnzol-40 <= posXPeixe && posXAnzol + 65 >= posXPeixe) { //se o peixe estiver dentro de uma faixa definida pela posicao do anzol
+    /*-- FISHING --*/
+    //0 > water, 1 > out of water;
+    //if the saved reading is inside the water (0) but the current is out of water (1) then you removed the sensor from the water (fished)
+    if (savedSensorRead == 0 && currentSensorRead == 1) {
+      if (posXHook-40 <= posXFish && posXHook + 65 >= posXFish) { //if the fish is N pixels close to the hook
         //println("pescou");
-        pontos = pontos + ganhos; //ganha os pontos. pontos = pontos atuais + valor atual de ganhos (streak de peixes pescados)
-        textoGanhos = ganhos; //define o texto que vai aparecer subindo a tela antes de somar +1
-        ganhos++; //soma +1 nos ganhos, aqui soma toda vez que pesca e reseta pra 1 quando perde
-        posXPeixe = width; //retorna o peixe pro canto direito da tela
-        velocidadePeixe = int(random(2, 12)); //define uma nova velocidade aleatoria pro proximo peixe
+        points = points + bonus; //points! points = current points + current bonus (fish streak)
+        bonusText = bonus; //bonus text is defined
+        bonus++; //adds +1 in bonus value
+        posXFish = width; //fish goes back to the right
+        fishSpeed = int(random(2, 12)); //new random speed for the next fish
 
-        //texto com o valor dos pontos ganhos
-        posTextoGanhosY = height/2; //define a posição Y do texto pro meio da tela
-        animacaoGanhos = true; //define a animação como true
+        //bonus text
+        posYBonusText = height/2; //sets position Y as half of the screen
+        bonusAnimation = true; //sets animation as true
       }
 
-      leituraSalva = leituraAtual; //salva a leitura atual como leitura salva
+      savedSensorRead = currentSensorRead; //current reading of the sensor is now the saved reading
     }
-    //se a leitura salva (anterior) for fora dagua (1) e a atual for dentro dagua (0) é pq colocou a vara de pesca dentro dagua de novo
-    if (leituraSalva == 1 && leituraAtual == 0) {
-      leituraSalva = leituraAtual;
+    //if the saved reading is out of water (1) but current is inside the water (0) the sensor was put in the water again
+    if (savedSensorRead == 1 && currentSensorRead == 0) {
+      savedSensorRead = currentSensorRead;
     }
 
-    /*-- PESCA DE LIXO --*/
-    if (leituraAtual == 0) { //se a vara estiver dentro dagua
-      if (posXAnzol-40 <= posXLixo && posXAnzol + 65 >= posXLixo) { //se o lixo estiver dentro de uma faixa definida pela posicao do anzol
+    /*-- TRASH HIT DETECTION --*/
+    if (currentSensorRead == 0) { //if the sensor is in the water
+      if (posXHook-40 <= posXTrash && posXHook + 65 >= posXTrash) { //if the trash is inside the fishing area
         //println("pescou");
-        if (bateuNoLixo == false) { //se o status de bateuNoLixo for falso, ou seja, se for a primeira batida do lixo com a vara
-          bateuNoLixo = true; //bateu no lixo vira true, entao perde 1 ponto só e não 1 ponto por pixel percorrido
-          pontos--; //perde 1 ponto
-          ganhos = 1; //reseta os ganhos
-          //animação com o valor dos pontos ganhos
-          posTextoPerdasX = posXAnzol + width*0.015; //define o X do texto como um pouco a direita do anzol
-          posTextoPerdasY = height/2; //define a posição Y do texto pro meio da tela
-          animacaoPerdas = true; //define a animação como true
+        if (isTrashHit == false) { //if this is the first time the trash is hitting the fishing hook
+          isTrashHit = true;
+          points--;
+          bonus = 1; 
+          //losses animation
+          posXLossesText = posXHook + width*0.015;
+          posYLossesText = height/2; 
+          lossesAnimation = true;
         }
       }
     }
 
-    if (posXLixo >= width*0.9) { //se o lixo estiver a 90% da tela ou mais (direita), é pq o lixo ressurgiu
-      bateuNoLixo = false; //entao volta a ser false pra preparar pro impacto seguinte
+    if (posXTrash >= width*0.9) { //if the trash is at 90% of the screen size it means the trash has resetted
+      isTrashHit = false;
     }
 
 
-    //texto com o valor de pontos ganhos que sobe a tela ao pescar
-    if (animacaoGanhos == true) { //a animação é definida como true ao pescar
-      fill(255, 255, 255, posTextoGanhosY); //define a cor do texto, posição Y é usada no alpha pra fazer ir ficando transparente ao subir
-      text("+"+textoGanhos, posXAnzol + width*0.015, posTextoGanhosY); //texto um pouco a direita do anzol subindo
-      posTextoGanhosY = posTextoGanhosY - 3; //vai subindo 3 posicoes
+    //bonus points animation
+    if (bonusAnimation == true) {
+      fill(255, 255, 255, posYBonusText);
+      text("+"+bonusText, posXHook + width*0.015, posYBonusText); 
+      posYBonusText = posYBonusText - 3; 
     }
-    if (posTextoGanhosY<0) { //quando a posicao for menor que 0 é pq saiu da tela
-      animacaoGanhos = false; //entao animacao volta a ser false e é interrompida
+    if (posYBonusText<0) {
+      bonusAnimation = false;
     }
   }
 
-  //texto com o valor de pontos perdidos que sobe a tela ao perder ponto
-  if (animacaoPerdas == true) { //a animação é definida como true ao perder ponto
-    fill(255, 255, 255, posTextoPerdasY); //define a cor do texto, posição Y é usada no alpha pra fazer ir ficando transparente ao subir
-    text("-1", posTextoPerdasX, posTextoPerdasY); //texto um pouco a direita do anzol subindo
-    posTextoPerdasY = posTextoPerdasY - 3; //vai subindo 3 posicoes
+  //lost points animation
+  if (lossesAnimation == true) { 
+    fill(255, 255, 255, posYLossesText); 
+    text("-1", posXLossesText, posYLossesText); 
+    posYLossesText = posYLossesText - 3;
   }
-  if (posTextoPerdasY<0) { //quando a posicao for menor que 0 é pq saiu da tela
-    animacaoPerdas = false; //entao animacao volta a ser false e é interrompida
+  if (posYLossesText<0) {
+    lossesAnimation = false; 
   }
 }
