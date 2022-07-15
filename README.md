@@ -8,9 +8,13 @@ The idea of this project was to build a fishing minigame, similar to the ones fo
 https://user-images.githubusercontent.com/47862856/177642214-8de76fbd-b042-4460-bff1-4337da4aa81d.mp4
 
 ## How it was made
+
+#### Code
 Language: Processing\
 [Download Arduino](https://www.arduino.cc/en/software) to install Standard Firmata on your board\
 [Download Processing](https://processing.org/download) to run the game
+
+The code is available in [🇺🇸 english here](https://github.com/Feliperpvieira/Arduino-Fishing-Game/tree/main/sketch_fishingGame) and in [🇧🇷 portuguese here](https://github.com/Feliperpvieira/Arduino-Fishing-Game/tree/main/sketch_jogoPesca-ptBR).
 
 #### Eletronic components
 <table>
@@ -51,6 +55,6 @@ Each piece is roughly [7.5 X 1.5 inches](https://user-images.githubusercontent.c
 [Download Arduino](https://www.arduino.cc/en/software) to install Standard Firmata on your board\
 [Download Processing](https://processing.org/download) to run the game
 
-1- Open Arduino, go to File > Examples > Firmata > Standard Firmata
-2- Upload "Standard Firmata" to your board. You can close the Arduino software now.
+1- Open Arduino, go to File > Examples > Firmata > Standard Firmata\
+2- Upload "Standard Firmata" to your board. You can close the Arduino software now.\
 3- Open processing and download 
