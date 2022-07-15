@@ -34,14 +34,23 @@ Language: Processing\
 
 The circuit is simple, you need to connect the sensor to the Arduino using a resistor between the input and ground cables.
 
-![DSCF2565-2](https://user-images.githubusercontent.com/47862856/179271221-70145025-c37d-4a08-bcb9-f472f0115fb2.jpg)
-
 - 🔵 Blue cable: 5V (Arduino) -> Water level sensor
 - 🟣 Purple cable: Ground/GND (Arduino) -> Resistor
 - 🟢 Green cable: Digital input (Arduino) -> Resistor -> Water Level Sensor
+
+![DSCF2565-2](https://user-images.githubusercontent.com/47862856/179271221-70145025-c37d-4a08-bcb9-f472f0115fb2.jpg)
 
 You can see in more details the circuit and the fishing rod in the following video:
 
 https://user-images.githubusercontent.com/47862856/179274409-4f7bc57d-b267-4d9c-96fa-20be3cf970c4.mp4
 
-The fishing rod was built using two pieces of 3mm MDF
+The fishing rod was built using pieces of 3mm MDF. They were cut by hand using a tabletop saw; the piece's shape was then made with a bench sander, including the rounded borders. The holes were drilled using different sized bits, one for the sensor and the other, a smaller one, to attach the 2 pieces together. Everything was then varnished to protect the wood from water.\
+Each piece is roughly [7.5 X 1.5 inches](https://user-images.githubusercontent.com/47862856/179283887-51402001-d399-4b1a-be23-ff17b1163aba.jpg).
+
+## How to install and run the game
+[Download Arduino](https://www.arduino.cc/en/software) to install Standard Firmata on your board\
+[Download Processing](https://processing.org/download) to run the game
+
+1- Open Arduino, go to File > Examples > Firmata > Standard Firmata
+2- Upload "Standard Firmata" to your board. You can close the Arduino software now.
+3- Open processing and download 
