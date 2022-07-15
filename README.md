@@ -57,4 +57,28 @@ Each piece is roughly [7.5 X 1.5 inches](https://user-images.githubusercontent.c
 
 1- Open Arduino, go to File > Examples > Firmata > Standard Firmata\
 2- Upload "Standard Firmata" to your board. You can close the Arduino software now.\
-3- Open processing and download 
+3- Open processing and download the right file for you:
+- 🇺🇸 English: [sketch_fishingGame.zip](https://github.com/Feliperpvieira/Arduino-Fishing-Game/files/9123451/sketch_fishingGame.zip)
+- 🇧🇷 Portuguese: [sketch_jogoPesca_ptBR.zip](https://github.com/Feliperpvieira/Arduino-Fishing-Game/files/9123452/sketch_jogoPesca_ptBR.zip)
+
+4- Write the number of the digital input port your water level sensor is connected on line 9\
+5- Run the software and follow the instructions on the console to write the Serial Number your Arduino is connected on the setup() function (line 🇧🇷 55 or 🇺🇸 56)\
+6- Run and play the game!
+
+### No Arduino? No problem.
+If you don't have an Arduino or the water level sensor available but still want to try the game there's a special version for you!
+
+🖱 No-Arduino / Mouse version: [sketch_fishingGame_mouse.zip](https://github.com/Feliperpvieira/Arduino-Fishing-Game/files/9123454/sketch_fishingGame_mouse.zip)
+
+All you need is to download and open the file on Processing to play the mouse version.\
+In this version, keeping the fishing rod in the water was replaced by pressing the mouse button.\
+Press the mouse button to keep the fishing hook in the water, release the button to fish. Good luck!
+
+#### Screenshots 
+<table>
+  <tr>
+    <td><img width="400" src="https://user-images.githubusercontent.com/47862856/179299026-33071767-28ae-45a2-8ef7-0981ba697b06.png"></td>
+    <td><img width="400" src="https://user-images.githubusercontent.com/47862856/179299066-0a74b2ab-1916-42b6-95bf-96088d4ba1f9.png"></td>
+    <td><img width="400" src="https://user-images.githubusercontent.com/47862856/179299093-69233928-572f-470c-838c-32a1f3908910.png"></td>
+  </tr>
+</table>
