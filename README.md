@@ -19,7 +19,7 @@ Language: Processing\
 [Download Arduino](https://www.arduino.cc/en/software) to install Standard Firmata on your board\
 [Download Processing](https://processing.org/download) to run the game
 
-The code is available in [🇺🇸 english here](https://github.com/Feliperpvieira/Arduino-Fishing-Game/tree/main/sketch_fishingGame) and in [🇧🇷 portuguese here](https://github.com/Feliperpvieira/Arduino-Fishing-Game/tree/main/sketch_jogoPesca-ptBR).
+The code is available in [🇺🇸 english here](https://github.com/Feliperpvieira/Arduino-Fishing-Game/tree/main/sketch_fishingGame) and in [🇧🇷 portuguese here](https://github.com/Feliperpvieira/Arduino-Fishing-Game/tree/main/sketch_jogoPesca_ptBR).
 
 #### Eletronic components
 <table>
